@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no"/>
+    <title>Bikepacking from Klaipėda to Vilnius (unsupported bicycle adventure)</title>
+    <!-- Bootstrap CSS -->
+    <link type="text/css" rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+    <!-- // -->
+    <link type="text/css" rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.css"/>
+    <!-- // -->
+    <style type="text/css">
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; }
+        .marker { display: block; border: none; border-radius: 50%; cursor: pointer; padding: 0; width: 60px; height: 60px; background-size: cover; background-position: center center; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.js"></script>
+<!-- // -->
+<script type="text/javascript" src="js/route.js"></script>
+<script type="text/javascript" src="js/photos.js"></script>
+<!-- // -->
+<script type="text/javascript">
+    var FeatureCollection = [];
+
+    FeatureCollection.push({
+        type: 'Feature',
+        geometry: {
+            type: 'LineString',
+            coordinates: route,
+        }
+    });
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYWxpdXNwZXRyYXNrYSIsImEiOiJjajlxd3pmbjg2OGR6MnFxdDk5M205dmI1In0.6zIodwQbHVLbPfbhBEdRhg';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [23.054192, 55.221502],
+        zoom: 7,
+    });
+
+    map.on('load', function() {
+        map.addSource('lietuva', {
+            type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: FeatureCollection,
+            }
+        });
+
+        map.addLayer({
+            id: 'track',
+            type: 'line',
+            source: 'lietuva',
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': '#FF0000',
+                'line-width': 5
+            },
+            filter: ['==', '$type', 'LineString'],
+        });
+
+        photos.forEach(function(photo) {
+            var el = document.createElement('div');
+            el.className = 'marker';
+            el.style.backgroundImage = 'url(' + photo['photo'] + ')';
+
+            // add marker to map
+            new mapboxgl.Marker(el).setLngLat(photo['coordinates']).addTo(map);
+        });
+    });
+</script>
+</body>
+</html>

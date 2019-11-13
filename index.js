@@ -28,10 +28,10 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'static')));
+app.use(express.static(path.join(__dirname, 'mapbox')));
 
 app.use('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'static/index.html'));
+    res.sendFile(path.join(__dirname, 'mapbox/index.html'));
 });
 
 http.createServer(app).listen(process.env.PORT || 3000, () => {
